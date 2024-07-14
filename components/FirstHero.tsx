@@ -74,7 +74,7 @@ export default function FirstHero() {
             </a>
 
             <Link
-              href="/MY CV .pdf"
+              href="/WebDeveloper_CV .pdf"
               locale={false}
               className=" 
                         border-b-2 
