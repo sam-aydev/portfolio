@@ -1,105 +1,205 @@
-"use client"
-import { useState } from "react";
+"use client";
 
-export default function Contact(){
-    
-    const [ email, setEmail ] = useState("");
-    const [ name, setName ] = useState("");
-    const [ message, setMessage ] = useState("");
-    const [ isLoading, setIsLoading ] = useState(false);
-    const [ nofill, setNoFill ] = useState(false);
-    const [ emailerr, setEmailErr ] = useState(false);
-    const [ success, setSuccess ] = useState(false)
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+
+export default function Contact() {
+  const [currentTime, setCurrentTime] = useState("");
+  
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(
+        new Date().toLocaleTimeString("en-US", {
+          timeZone: "Africa/Lagos",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
+        })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
 
-    async function handleSend(e:any){
-        e.preventDefault()
-        if(!name || !email || !message) {
-            setNoFill(true);
-            return;
-        };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus("loading");
 
-        if(email.includes("gmail.com") || 
-        email.includes("yahoo.com") || 
-        email.includes("outlook.com")){
-            setEmailErr(true);
-            return;
-        }
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+    };
 
-        try{
-            setIsLoading(true)
-            const res = await fetch("/api/contact", {
-                method: "POST", 
-                body: JSON.stringify({
-                    name, 
-                    email, 
-                    message
-                })
-            });
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-            if(res.ok){
-                console.log(res)
-                setSuccess(true)
-            }else{
-
-                console.log("big error")
-            }
-        }catch(error){
-            console.log(error)
-        }finally{
-            setEmail("");
-            setMessage("");
-            setName("")
-            setIsLoading(false)
-        }
+      if (response.ok) {
+        setStatus("success");
+        (e.target as HTMLFormElement).reset(); 
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setStatus("error");
+      }
+    } catch (error) {
+      setStatus("error");
     }
+  };
 
+  return (
+    <section id="contact" className="relative min-h-screen flex items-center bg-neutral-950 py-[15vh] px-6 overflow-hidden">
+      
+      {/* Background Ambient Glow */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[800px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
 
-    return(
-        <div className="mt-7 sm:mt-14 ">
-                <div className=" flex justify-center items-center flex-col">
-                    <div>
-                        <h2 className="text-center text-2xl font-medium sm:text-3xl">Contact</h2>
-                        <p className="text-slate-600 font-medium text-center mt-4 sm:mx-auto sm:w-2/3">I would love to hear about your project and how I could help. 
-                            Please fill in the form, and I will get back to you as soon as possible.
-                        </p>
-                    </div>
-
-                    <form id="contact" onSubmit={handleSend} className="w-full mt-8 sm:w-2/3">
-                        {nofill && <p className="text-center bg-slate-600 text-white p-2">Please make sure to fill in all the fields!</p>}
-                        {success && <p className="text-center bg-green-700 text-white p-2">Message has been sent successfully!</p>}
-                        <div>
-                            <label className="block">EMAIL: <span className={emailerr ? "font-bold text-slate-900" : "text-slate-300"}>Only working email address is accepted!</span></label>
-                            <input disabled={isLoading} value={email} onChange={(e)=>{
-                                    setEmailErr(false);
-                                    setNoFill(false)
-                                    setEmail(e.target.value)
-                                    }} type="email" className="border-b-2 p-1 outline-none w-full border-b-black"/>
-                        </div>
-
-                        <div className="mt-2">
-                            <label className="block">NAME:</label>
-                            <input disabled={isLoading} value={name} onChange={(e)=> {
-                                    setEmailErr(false);
-                                    setNoFill(false)
-                                    setName(e.target.value)
-                                }}  type="text" className="border-b-2 p-1 outline-none w-full border-b-black"/>
-                        </div>
-
-                        <div className="mt-2">
-                            <label className="block">MESSAGE:</label>
-                            <textarea disabled={isLoading}   value={message} onChange={(e)=> {
-                                setEmailErr(false);
-                                setNoFill(false);
-                                setMessage(e.target.value)
-                                }}  className="border-b-2 p-1 resize-none outline-none w-full border-b-black"></textarea>
-                        </div>
-
-                        <div className="mt-2">
-                            <button disabled={isLoading}  className="font-medium py-2 border-b-2 border-b-green-600 hover:border-b-green-300">SEND MESSAGE</button>
-                        </div>
-                    </form>
-                </div>
+      <div className="mx-auto md:w-5/6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+          
+          {/* Left Column: Context & Info */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col justify-center"
+          >
+            <div className="inline-flex items-center gap-3 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-400 w-max mb-8">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              Available for new opportunities
             </div>
-    )
+
+            <h2 className="text-5xl md:text-7xl font-bold tracking-tight text-neutral-100 mb-6">
+              Let's build <br className="hidden md:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+                something great.
+              </span>
+            </h2>
+            
+            <p className="text-lg text-neutral-400 mb-12 max-w-md leading-relaxed">
+              Whether you have a complex architectural problem to solve, a full-stack role, or just want to connect, my inbox is always open.
+            </p>
+
+            {/* Premium Info Cards */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a href="mailto:samueladetunji000@gmail.com" className="group flex flex-col justify-center rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6 transition-all hover:border-blue-500/50 hover:bg-neutral-800/80">
+                <span className="text-neutral-500 text-sm font-medium mb-2 uppercase tracking-wider">Direct Email</span>
+                <span className="text-neutral-200 font-semibold group-hover:text-blue-400 transition-colors">samueladetunji000@gmail.com</span>
+              </a>
+              
+              <div className="flex flex-col justify-center rounded-2xl border border-neutral-800 bg-neutral-900/50 p-6">
+                <span className="text-neutral-500 text-sm font-medium mb-2 uppercase tracking-wider">Local Time (Lagos)</span>
+                <span className="text-neutral-200 font-mono font-semibold text-lg">{currentTime || "Loading..."}</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right Column: The Form */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative"
+          >
+            {/* Glassmorphic Form Container */}
+            <form 
+              onSubmit={handleSubmit}
+              className="relative flex flex-col gap-6 rounded-3xl border border-neutral-800 bg-neutral-900/40 p-8 md:p-10 backdrop-blur-xl shadow-2xl"
+            >
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="name" className="text-sm font-medium text-neutral-400 ml-1">Name</label>
+                  <input 
+                    type="text" 
+                    id="name"
+                    name="name" // REQUIRED for Formspree
+                    required
+                    placeholder="John Doe"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/50 px-4 py-3 text-neutral-200 placeholder:text-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="email" className="text-sm font-medium text-neutral-400 ml-1">Email</label>
+                  <input 
+                    type="email" 
+                    id="email"
+                    name="email" // REQUIRED for Formspree
+                    required
+                    placeholder="john@company.com"
+                    className="w-full rounded-xl border border-neutral-800 bg-neutral-950/50 px-4 py-3 text-neutral-200 placeholder:text-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="message" className="text-sm font-medium text-neutral-400 ml-1">Message</label>
+                <textarea 
+                  id="message"
+                  name="message" // REQUIRED for Formspree
+                  required
+                  rows={5}
+                  placeholder="Tell me about your project or the role you are hiring for..."
+                  className="w-full resize-none rounded-xl border border-neutral-800 bg-neutral-950/50 px-4 py-3 text-neutral-200 placeholder:text-neutral-600 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={status === "loading" || status === "success"}
+                className={`group relative mt-4 inline-flex w-full items-center justify-center overflow-hidden rounded-xl px-8 py-4 font-semibold text-white transition-all disabled:cursor-not-allowed ${
+                  status === "success" 
+                    ? "bg-emerald-600 hover:bg-emerald-500" 
+                    : status === "error"
+                    ? "bg-red-600 hover:bg-red-500"
+                    : "bg-blue-600 hover:bg-blue-500 active:scale-[0.98]"
+                }`}
+              >
+                <span className="absolute inset-0 h-full w-full bg-gradient-to-r from-blue-400 to-cyan-300 opacity-0 transition-opacity duration-300 group-hover:opacity-20"></span>
+                <span className="relative flex items-center gap-2">
+                  {status === "idle" && (
+                    <>
+                      Send Message
+                      <svg className="w-5 h-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </>
+                  )}
+                  {status === "loading" && (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </>
+                  )}
+                  {status === "success" && "Message Sent Successfully!"}
+                  {status === "error" && "Error sending. Try again."}
+                </span>
+              </button>
+            </form>
+          </motion.div>
+
+        </div>
+      </div>
+    </section>
+  );
 }
