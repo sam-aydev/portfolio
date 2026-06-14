@@ -151,7 +151,7 @@ export default function Hero() {
 
           {/* LinkedIn Icon */}
           <a
-            href="https://www.linkedin.com/in/samueladetunji-dataengineer/"
+            href="https://www.linkedin.com/in/sam-aydev/"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-neutral-400 hover:text-white transition-colors"
