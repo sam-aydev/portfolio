@@ -57,7 +57,7 @@ export default function Hero() {
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/50 px-4 py-1.5 text-sm font-medium text-neutral-400 backdrop-blur-md"
         >
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          Full Stack Software Engineer
+          Senior Software & Data Engineer
         </motion.div>
 
         {/* Name */}
