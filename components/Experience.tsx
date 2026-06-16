@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 const experiences = [
   {
     id: "buildon",
-    role: "Fullstack Engineer",
+    role: "Senior Fullstack Engineer",
     company: "Buildon Inc.",
     location: "Delaware, US",
     date: "April 2026 - Present",
@@ -18,7 +18,7 @@ const experiences = [
   },
   {
     id: "technophlix",
-    role: "Software Engineer Intern",
+    role: "Software Engineer",
     company: "Technophlix",
     location: "India",
     date: "July 2024 - October 2024",
