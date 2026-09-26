@@ -62,10 +62,7 @@ export default function Contact() {
   return (
     <section id="contact" className="relative min-h-screen flex items-center bg-neutral-950 py-[15vh] px-6 overflow-hidden">
       
-      {/* Background Ambient Glow */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/3 w-[800px] h-[800px] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[600px] h-[600px] bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
-
+  
       <div className="mx-auto md:w-5/6 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
           

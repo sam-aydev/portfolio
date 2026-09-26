@@ -101,7 +101,7 @@ export default function Hero() {
 
             {/* Secondary CTA (Download CV) */}
             <a
-              href="ADETUNJI_SAMUEL_CV.pdf"
+              href="ADETUNJI_SAMUEL.pdf"
               download="ADETUNJI_SAMUEL_CV.pdf"
               className="group flex items-center justify-center gap-2 rounded-full border border-neutral-700 bg-transparent px-8 py-3.5 font-medium text-neutral-300 transition-all hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-white w-full sm:w-auto"
             >
@@ -118,7 +118,7 @@ export default function Hero() {
                   d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                 />
               </svg>
-              Download CV
+              Download RESUME
             </a>
           </motion.div>
 
@@ -162,20 +162,15 @@ export default function Hero() {
           <motion.div
             animate={{ y: [-8, 8, -8] }}
             transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-            className="relative w-full aspect-4/5 rounded-3xl overflow-hidden bg-neutral-900/50 border border-neutral-800 shadow-2xl shadow-blue-900/20 group"
+            className="relative w-full  rounded-full size-[400px]"
           >
-            <div className="absolute inset-0 bg-linear-to-tr from-blue-500/10 to-emerald-500/10 opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-
             <Image
               src="/adetunji_samuel.png"
               alt="Adetunji Samuel"
-              fill
-              className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
-              sizes="(max-width: 768px) 280px, 320px"
-              priority
+              width={200}
+              height={200}
+              className="object-cover object-top transition-transform duration-700 rounded-full size-96 group-hover:scale-105"
             />
-
-            <div className="absolute inset-0 rounded-3xl shadow-[inset_0_0_30px_rgba(0,0,0,0.6)] pointer-events-none" />
           </motion.div>
         </motion.div>
       </div>
